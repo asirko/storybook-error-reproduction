@@ -53,9 +53,9 @@ Works only if all values come from @Input arguments.
 
 ### Error case
 
-If some @Input have default value, those values are stringified.
+If some fields have default value (@Input like any other field, even private field), those values are stringified.
 
-And generate an error in the component
+The only way to avoid this is to @Input strictly all values. Sometimes it's impossible (ex: private fields)
 
 <Canvas>
   <Story name="failing Template.bind({})">
@@ -90,10 +90,12 @@ ERROR Error: Cannot find a differ supporting object '[
     at ViewRef$1.detectChanges (core.mjs:21428:1)
 ```
 
-And in the control section of the canvas of this third story, I got movies =
+And in the controls section of the canvas of this third story, I got movies =
 
 ```
 "[\n    'Episode I - The Phantom Menace',\n    'Episode II - Attack of the Clones',\n    'Episode III - Revenge of the Sith',\n    'Episode IV - A New Hope',\n    'Episode V - The Empire Strikes Back',\n    'Episode VI - Return of the Jedi',\n    'Episode VII - The Force Awakens',\n    'Episode VIII - The Last Jedi',\n    'Episode IX – The Rise of Skywalker',\n  ]"
 ```
 
-When the second stories display an editable array of string
+When the second stories display an editable array of string.
+
+I also tried to write typescript stories, but I've the same result
