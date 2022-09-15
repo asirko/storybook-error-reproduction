@@ -1,0 +1,99 @@
+import {Canvas, Meta, Story} from '@storybook/addon-docs';
+import {moduleMetadata} from '@storybook/angular';
+import {MyCompoComponent} from "./my-compo.component";
+import {BrowserModule} from '@angular/platform-browser';
+import {DragDropModule} from '@angular/cdk/drag-drop'
+
+<Meta title="MyCompo/MDX"
+      component={MyCompoComponent}
+      decorators={[moduleMetadata({imports: [BrowserModule, DragDropModule]})]}/>
+
+# With {{ template: \`&lt;app-my-compo&gt;&lt;/app-my-compo&gt;\` }} synthax
+
+This syntax is working, but I have no idea how to pass parameters as @Input
+
+<Canvas>
+  <Story
+    name="With {{ template: \`&lt;app-my-compo&gt;&lt;/app-my-compo&gt;\` }} synthax">
+    {{
+      template: `<app-my-compo></app-my-compo>`,
+    }}
+  </Story>
+</Canvas>
+
+I tried
+```
+<Canvas>
+  <Story
+    name="div">
+    {{
+      template: `<app-my-compo movies={['val 1', 'val 2', 'val 3', 'val 4']}></app-my-compo>`,
+    }}
+  </Story>
+</Canvas>
+```
+
+But generate errors.
+
+# With {Template.bind({})} synthax
+
+export const Template = (args) => ({ props: args });
+
+### Working case
+
+Works only if all values come from @Input arguments.
+
+<Canvas>
+  <Story name="working Template.bind({})" args={{
+    movies: ['val 1', 'val 2', 'val 3', 'val 4']
+  }}>
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+### Error case
+
+If some @Input have default value, those values are stringified.
+
+And generate an error in the component
+
+<Canvas>
+  <Story name="failing Template.bind({})">
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+
+In this case I got the error
+
+```
+ERROR Error: Cannot find a differ supporting object '[
+    'Episode I - The Phantom Menace',
+    'Episode II - Attack of the Clones',
+    'Episode III - Revenge of the Sith',
+    'Episode IV - A New Hope',
+    'Episode V - The Empire Strikes Back',
+    'Episode VI - Return of the Jedi',
+    'Episode VII - The Force Awakens',
+    'Episode VIII - The Last Jedi',
+    'Episode IX – The Rise of Skywalker',
+  ]' of type 'string'. NgFor only supports binding to Iterables such as Arrays.
+    at NgForOf.ngDoCheck (common.mjs:3163:1)
+    at callHook (core.mjs:2559:1)
+    at callHooks (core.mjs:2518:1)
+    at executeInitAndCheckHooks (core.mjs:2469:1)
+    at refreshView (core.mjs:9514:1)
+    at refreshComponent (core.mjs:10670:1)
+    at refreshChildComponents (core.mjs:9295:1)
+    at refreshView (core.mjs:9549:1)
+    at detectChangesInternal (core.mjs:10852:1)
+    at ViewRef$1.detectChanges (core.mjs:21428:1)
+```
+
+And in the control section of the canvas of this third story, I got movies =
+
+```
+"[\n    'Episode I - The Phantom Menace',\n    'Episode II - Attack of the Clones',\n    'Episode III - Revenge of the Sith',\n    'Episode IV - A New Hope',\n    'Episode V - The Empire Strikes Back',\n    'Episode VI - Return of the Jedi',\n    'Episode VII - The Force Awakens',\n    'Episode VIII - The Last Jedi',\n    'Episode IX – The Rise of Skywalker',\n  ]"
+```
+
+When the second stories display an editable array of string
